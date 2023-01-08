@@ -23,26 +23,26 @@ const Home = () => {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <Head>
         <title>URL Shortener</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-screen h-screen items-center flex flex-col space-y-24 mt-48">
-        <h1 className="text-6xl font-semibold text-gray-600 ">URL Shortener</h1>
+      <main className="w-screen h-screen items-center flex flex-col space-y-12 pt-24">
+        <h1 className="text-4xl font-semibold text-gray-600 ">URL Shortener</h1>
         <form
           className="flex flex-col w-full px-8 space-y-4 md:flex-row md:w-[80%] lg:w-[1000px] md:items-center md:space-y-0 md:space-x-4"
           onSubmit={(e) => (e.preventDefault(), handleSubmit(url))}
         >
           <input
-            className="border-2 md:w-2/3 border-[gray] w-full h-14 rounded px-4 text-[18px] outline-none focus:border-blue-500"
+            className="border-2 md:w-2/3 border-[gray] w-full h-12 rounded px-4 text-[16px] outline-none focus:border-blue-500"
             placeholder="Enter URL"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
           />
           <button
-            className="border-2 md:w-1/3 h-14 text-[24px] bg-blue-500 text-white rounded"
+            className="border-2 md:w-1/3 h-12 text-[20px] bg-blue-500 text-white rounded"
             type="submit"
             disabled={loading}
           >
@@ -50,7 +50,7 @@ const Home = () => {
           </button>
         </form>
         {shortUrl.length !== 0 && (
-          <div className="flex items-center space-x-4 bg-green-400 text-white pl-12 px-6 py-3 rounded-2xl font-medium text-2xl">
+          <div className="flex items-center space-x-4 bg-green-400 text-white pl-6 px-4 py-3 rounded-2xl font-medium text-xl">
             <Link href={shortUrl} className="underline flex-1">
               {shortUrl}
             </Link>
@@ -61,11 +61,11 @@ const Home = () => {
               )}
             >
               {clicked ? (
-                <ClipboardDocumentListIcon />
+                <ClipboardDocumentListIcon className="w-6 h-6" />
               ) : (
-                <ClipboardDocumentIcon />
+                <ClipboardDocumentIcon className="w-6 h-6" />
               )}
-              <p className="text-sm">{clicked ? "copied" : "copy"}</p>
+              <p className="text-xs">{clicked ? "copied" : "copy"}</p>
             </button>
           </div>
         )}
