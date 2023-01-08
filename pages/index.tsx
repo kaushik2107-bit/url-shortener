@@ -1,86 +1,77 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
+import Head from "next/head";
+import Link from "next/link";
+import { useState } from "react";
+import { useUrlShort } from "../hooks/useUrlShort";
+import { ClipLoader } from "react-spinners";
+import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
+import { ClipboardDocumentListIcon } from "@heroicons/react/24/solid";
 
-const Home: NextPage = () => {
+const Home = () => {
+  const [url, setUrl] = useState<string>("");
+  const [shortUrl, setShortUrl] = useState<string>("");
+  const { buildUrl } = useUrlShort();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [clicked, setClicked] = useState<boolean>(false);
+
+  const handleSubmit = async (url: string) => {
+    setLoading(true);
+    setClicked(false);
+    const id = await buildUrl(url);
+    const short = `${process.env.NEXT_PUBLIC_URL}${id}`;
+    setShortUrl(short);
+    setLoading(false);
+  };
+
   return (
     <div className="flex min-h-screen flex-col items-center justify-center py-2">
       <Head>
-        <title>Create Next App</title>
+        <title>URL Shortener</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
-        </h1>
-
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and its API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
-      </main>
-
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      <main className="w-screen h-screen items-center flex flex-col space-y-24 mt-48">
+        <h1 className="text-6xl font-semibold text-gray-600 ">URL Shortener</h1>
+        <form
+          className="flex flex-col w-full px-8 space-y-4 md:flex-row md:w-[80%] lg:w-[1000px] md:items-center md:space-y-0 md:space-x-4"
+          onSubmit={(e) => (e.preventDefault(), handleSubmit(url))}
         >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+          <input
+            className="border-2 md:w-2/3 border-[gray] w-full h-14 rounded px-4 text-[18px] outline-none focus:border-blue-500"
+            placeholder="Enter URL"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+          />
+          <button
+            className="border-2 md:w-1/3 h-14 text-[24px] bg-blue-500 text-white rounded"
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? <ClipLoader size={25} color={"white"} /> : "Generate"}
+          </button>
+        </form>
+        {shortUrl.length !== 0 && (
+          <div className="flex items-center space-x-4 bg-green-400 text-white pl-12 px-6 py-3 rounded-2xl font-medium text-2xl">
+            <Link href={shortUrl} className="underline flex-1">
+              {shortUrl}
+            </Link>
+            <button
+              className="cursor-pointer flex flex-col items-center"
+              onClick={() => (
+                navigator.clipboard.writeText(shortUrl), setClicked(true)
+              )}
+            >
+              {clicked ? (
+                <ClipboardDocumentListIcon />
+              ) : (
+                <ClipboardDocumentIcon />
+              )}
+              <p className="text-sm">{clicked ? "copied" : "copy"}</p>
+            </button>
+          </div>
+        )}
+      </main>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
